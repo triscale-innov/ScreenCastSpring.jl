@@ -1,4 +1,5 @@
 using CUDA 
+using LaTeXStrings #for latex string in plot labels
 gr() #default Plots.jl backend
 
 function initial_position(i,j,ls,λ,shift,posx,posy)
@@ -105,7 +106,13 @@ function animate_spring2D(sp,ip,ap,V=Array{Float64,2})
         @. cdc = dc 
         t+=nδtperframe*δt
         contour(xaxis,yaxis,cdc,clims=(0,ip.shift/2),
-        title="t=$t",aspect_ratio=:equal)
+            thickness_scaling = 1.4,
+            size=(600,600),
+            framestyle = :box,
+            xlabel=L"x_s",
+            ylabel=L"y_s",
+            right_margin = 10Plots.PlotMeasures.mm,
+            title=L"\sqrt{(x_c-x_s)^2+(y_c-y_s)^2}",aspect_ratio=:equal)
     end
 
     display_perf(tdynamic,xc,nδt)
