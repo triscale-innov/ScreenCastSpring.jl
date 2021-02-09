@@ -35,6 +35,14 @@ function update_force!(fx::AbstractArray{Float64,2},xc::AbstractArray{Float64,2}
         -xc[r1,r2])
 end
 
+function density_shift!(dc,xc,yc,ls)
+    ns=size(xc,1)
+    r0,r1,r2=1:ns-2,2:ns-1,3:ns
+    ds=1/(4ls^2)
+    @views @. dc[r1,r1] = 1/((xc[r2,r1] - xc[r0,r1])*(yc[r1,r2] - yc[r1,r0])) - ds
+end
+
+
 
 function initialize_arrays(sp,ip,ap,V)
     ls,ms,ks,ns=getvalues(sp)
