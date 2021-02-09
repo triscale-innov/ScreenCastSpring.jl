@@ -50,7 +50,7 @@ function animate_spring(sp,ip,ap)
         xc,xp,xt=advance_nδtpf(xc,xp,xt,fx,sp,ap)
         @. dc = xc - xs
         t+=nδtperframe*δt
-        plot(xs,dc,ylims=(-shift,shift),title="t=$t")
+        plot(xs,dc,ylims=(-shift*2,shift*2),title="t=$t")
     end
 
     gif(anim,"toto.gif",fps=15)
