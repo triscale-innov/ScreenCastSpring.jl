@@ -1,3 +1,5 @@
 [deps]
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+PlotUtils = "995b91a9-d308-5afd-9ec6-746e21dbc043"
 Spring = "e4e52cb7-b512-490f-82be-bf6acab770af"

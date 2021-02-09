@@ -1,4 +1,5 @@
 using CUDA 
+gr()
 function initial_position(i,j,ls,λ,shift,posx,posy)
     xs=steady_position(i,ls)
     ys=steady_position(j,ls)
