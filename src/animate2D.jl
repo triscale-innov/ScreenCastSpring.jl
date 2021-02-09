@@ -1,5 +1,6 @@
 using CUDA 
-gr()
+gr() #default Plots.jl backend
+
 function initial_position(i,j,ls,λ,shift,posx,posy)
     xs=steady_position(i,ls)
     ys=steady_position(j,ls)
@@ -82,7 +83,7 @@ function display_perf(td,xc,nδt)
 end
 
 
-function animate_spring2D(sp,ip,ap,V)
+function animate_spring2D(sp,ip,ap,V=Array{Float64,2})
     δt,nδt,nδtperframe=getvalues(ap)
     xs,xc,xp,xt,fx,ys,yc,yp,yt,fy=initialize_arrays(sp,ip,ap,V)
 

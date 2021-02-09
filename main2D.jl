@@ -6,8 +6,8 @@ function go()
     ap=AnimParam(δt=0.1,nδt=5000,nδtperframe=50)
 
     CUDA.allowscalar(false)
-    # V=Array{Float64,2}
-    V=CuArray{Float64,2}
+    V=Array{Float64,2}
+    # V=CuArray{Float64,2}
 
     @time animate_spring2D(sp,ip,ap,V)
 end
