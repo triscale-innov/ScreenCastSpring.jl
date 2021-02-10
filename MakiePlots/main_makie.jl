@@ -43,7 +43,7 @@ function setup_scene(xaxis,dc,nf)
         update_cam!(scene, Vec3f0(0, 0, 5), Vec3f0(0.01, 0.01, 0))
         rotate_cam!(scene,(π/4 ,-π/2 ,0))
         αstep=-(π/4)/(nf÷2)
-        lift(d->rotate_cam!(scene,(0 ,αstep ,0)),dcnode)c
+        lift(d->rotate_cam!(scene,(0 ,αstep ,0)),dcnode)
 
 
 
@@ -86,8 +86,8 @@ end
 
 function go()
     sp=SpringParam(ls=0.1,ms=1,ks=2.5,ns=1000)
-    ip=InitParam(λ=2.0,shift=0.1,pos=sp.ls*sp.ns/2)
-    ap=AnimParam(δt=0.2,nδt=5000,nδtperframe=20)
+    ip=InitParam(λ=3.0,shift=0.1,pos=sp.ls*sp.ns/2)
+    ap=AnimParam(δt=0.2,nδt=12000,nδtperframe=20)
 
     CUDA.allowscalar(false)
     # V=Array{Float64,2}
