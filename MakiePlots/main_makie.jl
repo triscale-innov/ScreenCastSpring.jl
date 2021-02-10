@@ -1,8 +1,32 @@
 using Spring
-using Spring: getvalues,advance_nδtpf,initialize_arrays,density_shift!
+using Spring: getvalues,advance_nδtpf,initialize_arrays
 using CUDA
 using Makie
 using PlotUtils #for colorant and color gradient (cgrad)
+
+
+"""
+    density_shift!(dc,xc,yc,ls)
+
+Approximate density variation for the 2D mass system :
+
+    dc[i,j]=δρij≃1/(Sij)-1/(4ls) where 
+
+        Sij is the surounding surface related to ij mass 
+        Sij= (xc[i+1,j]-xc[i-1,j])*(yc[i,j+1]-yc[i-1,j])
+
+        and 
+        
+        4ls is the steady surrounding surface 
+
+"""
+function density_shift!(dc,xc,yc,ls)
+    ns=size(xc,1) #assuming square array
+    r0,r1,r2=1:ns-2,2:ns-1,3:ns # UnitRange
+    ds=1/(4ls^2)  #steady density
+    @views @. dc[r1,r1] = 1/((xc[r2,r1] - xc[r0,r1])*(yc[r1,r2] - yc[r1,r0])) - ds
+end
+
 
 function setup_scene(xaxis,dc,nf)
     scene = Scene(resolution = (800, 800))

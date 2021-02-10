@@ -5,7 +5,7 @@ gr() #default Plots.jl backend
 function initial_position(i,j,ls,λ,shift,posx,posy)
     xs=steady_position(i,ls)
     ys=steady_position(j,ls)
-    dx=xs-posx
+    dx=xs-posx 
     dy=ys-posy
     dr=sqrt(dx^2+dy^2)
     ds=exp(-0.5*dr^2/λ^2)*λ*shift
@@ -32,33 +32,13 @@ function update_force!(fx::AbstractArray{Float64,2},xc::AbstractArray{Float64,2}
     r2=3:ns
 
     @views @. fx[r1,r1] = -ks*(4*xc[r1,r1]
-        -xc[r1,r0]
-        -xc[r0,r1]
-        -xc[r2,r1]
-        -xc[r1,r2])
+                                -xc[r1,r0]    # Down
+                                -xc[r0,r1]    # Left
+                                -xc[r2,r1]    # Right
+                                -xc[r1,r2])   # Up
 end
 
-"""
-    density_shift!(dc,xc,yc,ls)
 
-Approximate density variation for the 2D mass system :
-
-    dc[i,j]=δρij≃1/(Sij)-1/(4ls) where 
-
-        Sij is the surounding surface related to ij mass 
-        Sij= (xc[i+1,j]-xc[i-1,j])*(yc[i,j+1]-yc[i-1,j])
-
-        and 
-        
-        4ls is the steady surrounding surface 
-
-"""
-function density_shift!(dc,xc,yc,ls)
-    ns=size(xc,1) #assuming square array
-    r0,r1,r2=1:ns-2,2:ns-1,3:ns # UnitRange
-    ds=1/(4ls^2)  #steady density
-    @views @. dc[r1,r1] = 1/((xc[r2,r1] - xc[r0,r1])*(yc[r1,r2] - yc[r1,r0])) - ds
-end
 
 
 #V is the type of the returned arrays (type are first class citizens)
@@ -122,16 +102,12 @@ function animate_spring2D(sp,ip,ap,V=Array{Float64,2})
 
         t+=nδtperframe*δt
         contour(xaxis,yaxis,cdc,clims=(0,ip.shift/2), #level lines graph
-            thickness_scaling = 1.4,
-            size=(600,600),
-            framestyle = :box,
-            xlabel=L"x_s",
-            ylabel=L"y_s",
+            thickness_scaling = 1.4,size=(600,600),
+            xlabel=L"x_s",ylabel=L"y_s",
             right_margin = 10Plots.PlotMeasures.mm,
             title=L"\sqrt{(x_c-x_s)^2+(y_c-y_s)^2}",aspect_ratio=:equal)
     end
 
     display_perf(tdynamic,xc,nδt) #Display GFLOPS and GB/s
-
     gif(anim,"toto.gif",fps=15) # save the animation 
 end
