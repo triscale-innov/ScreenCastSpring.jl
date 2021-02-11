@@ -1,5 +1,4 @@
 using CUDA 
-using LaTeXStrings #for latex string in plot labels
 gr() #default Plots.jl backend
 
 function initial_position(i,j,ls,λ,shift,posx,posy)
@@ -41,8 +40,8 @@ end
 
 
 
-#V is the type of the returned arrays (type are first class citizens)
-function initialize_arrays(sp,ip,ap,V)
+#V is the type of the returned arrays (type are first class citizens !)
+function initialize_arrays(sp,ip,ap,V=Array{Float64,2})
     ls,ms,ks,ns=getvalues(sp)
     λ,shift,pos=getvalues(ip)
     δt,nδt,nδtperframe=getvalues(ap)
@@ -85,8 +84,8 @@ function animate_spring2D(sp,ip,ap,V=Array{Float64,2})
     dc=zero(xc)    # Displacement (type V)
     cdc=Array(xc)  # Displacement (type Array{Float64,2})
 
-    xaxis=Array(xs[:,1]) #1D Array
-    yaxis=Array(ys[1,:]) #1D Array
+    xaxis=Array(xs[:,1]) # 1D Array
+    yaxis=Array(ys[1,:]) # 1D Array
     nf=nδt÷nδtperframe # We assume a null remainder
 
     t=0.0 # Simulation time 

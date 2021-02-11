@@ -1,5 +1,5 @@
 Base.@kwdef struct SpringParam
-    ls::Float64 #Spring lenght
+    ls::Float64 # Spring length
     ms::Float64 # Mass
     ks::Float64 # Spring Strength
     ns::Int     # Mass number

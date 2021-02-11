@@ -15,7 +15,7 @@ end
 
 function update_position!(xt,xc,xp,fx,δt,ms)
     coef=δt^2/ms
-    @. xt = 2xc - xp + fx*coef #Broadcast : eltwize ops
+    @. xt = 2xc - xp + fx*coef #Broadcast : eltwise ops
 end
 
 function advance_nδtpf(xc,xp,xt,fx,sp,ap)
