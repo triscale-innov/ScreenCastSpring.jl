@@ -70,6 +70,7 @@ function animate_makie(sp,ip,ap,V)
     
     t=0.0
     tdynamic=0.0
+    # Makie.record(scene, "output.gif", 1:nf, framerate=15) do i
     for i ∈ 1:nf
         tdynamic+= @elapsed CUDA.@sync begin
             xc,xp,xt=advance_nδtpf(xc,xp,xt,fx,sp,ap)
@@ -87,7 +88,7 @@ end
 function go()
     sp=SpringParam(ls=0.1,ms=1,ks=2.5,ns=1000)
     ip=InitParam(λ=3.0,shift=0.1,pos=sp.ls*sp.ns/2)
-    ap=AnimParam(δt=0.2,nδt=12000,nδtperframe=20)
+    ap=AnimParam(δt=0.2,nδt=5000,nδtperframe=40)
 
     CUDA.allowscalar(false)
     # V=Array{Float64,2}
