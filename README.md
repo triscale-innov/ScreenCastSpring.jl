@@ -29,6 +29,15 @@ include("main1D.jl") #run twice to get proper timings
 
 ![](images/spring2dplots.gif)
 
+### 2D System with CUDA
+```julia
+cd("SpringCUDA")
+] activate .
+] instantiate
+include("main2D_cuda.jl")
+```
+
+
 ### 2D System with Makie display (requires OpenGL capable machine)
 
 ```julia
