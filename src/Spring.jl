@@ -5,6 +5,9 @@ module Spring
 
     export SpringParam,InitParam,AnimParam
     export animate_spring,animate_spring2D
+    gr()
+
+
 
     include("params.jl")
     include("animate1D.jl")

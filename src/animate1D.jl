@@ -3,7 +3,8 @@ steady_position(i,ls) = (i-1)*ls
 function initial_position(i,ls,λ,shift,pos)
     xs=steady_position(i,ls)
     dx=xs-pos
-    xs-λ*dx*shift*exp(-0.5*dx^2/λ^2)
+    ds=(-1/λ^2)*exp(-(dx/λ)^2/2)*shift
+    xs+λ*dx*ds
 end 
 
 function update_force!(fx,xc,ks)
@@ -41,6 +42,8 @@ function animate_spring(sp,ip,ap)
 
     dc,fx,xt=zero(xc),zero(xc),zero(xc)
     xp=copy(xc) # xp=xc <=> zero initial velocities
+    @. dc = xc - xs
+    mdc=maximum(dc)
 
     nf=nδt÷nδtperframe  
     t=0.0               # Simulation time
@@ -48,7 +51,7 @@ function animate_spring(sp,ip,ap)
         xc,xp,xt=advance_nδtpf(xc,xp,xt,fx,sp,ap)
         @. dc = xc - xs
         t+=nδtperframe*δt
-        plot(xs,dc,ylims=(-shift*2,shift*2),
+        plot(xs,dc,ylims=(-mdc,mdc),
             xlabel=L"x_s",ylabel=L"x_c(t) - x_s",
             thickness_scaling = 1.6,size=(600,400),legend=false,
             right_margin = 10Plots.PlotMeasures.mm,title="t=$(Int(round(t)))")

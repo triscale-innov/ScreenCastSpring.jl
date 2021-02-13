@@ -1,14 +1,11 @@
-using CUDA 
-gr() #default Plots.jl backend
-
 function initial_position(i,j,ls,λ,shift,posx,posy)
     xs=steady_position(i,ls)
     ys=steady_position(j,ls)
     dx=xs-posx 
     dy=ys-posy
     dr=sqrt(dx^2+dy^2)
-    ds=exp(-0.5*dr^2/λ^2)*λ*shift
-    xs-dx*ds,ys-dy*ds
+    ds=(-1/λ^2)*exp(-(dr/λ)^2/2)*shift
+    xs+dx*ds,ys+dy*ds
 end 
 
 function update_force!(fx::Array{Float64,2},xc::Array{Float64,2},ks)
@@ -30,11 +27,11 @@ function update_force!(fx::AbstractArray{Float64,2},xc::AbstractArray{Float64,2}
     r1=2:ns-1
     r2=3:ns
 
-    @views @. fx[r1,r1] = -ks*(4*xc[r1,r1]
-                                -xc[r1,r0]    # Down
-                                -xc[r0,r1]    # Left
-                                -xc[r2,r1]    # Right
-                                -xc[r1,r2])   # Up
+    @views @. fx[r1,r1] = -ks*(4xc[r1,r1]
+                            -xc[r1,r0]    # Down
+                            -xc[r0,r1]    # Left
+                            -xc[r2,r1]    # Right
+                            -xc[r1,r2])   # Up
 end
 
 
@@ -76,6 +73,7 @@ function display_perf(td,xc,nδt)
     println("$(round((mupns*nbytes),sigdigits=3))\t GB/s")
 end
 
+do_synchronize(V) = nothing #no need for sync for CPU Arrays
 
 function animate_spring2D(sp,ip,ap,V=Array{Float64,2})
     δt,nδt,nδtperframe=getvalues(ap)
@@ -83,6 +81,8 @@ function animate_spring2D(sp,ip,ap,V=Array{Float64,2})
 
     dc=zero(xc)    # Displacement (type V)
     cdc=Array(xc)  # Displacement (type Array{Float64,2})
+    @. dc = sqrt((xc - xs)^2+(yc - ys)^2) #displacement norm
+    mdc=maximum(dc)
 
     xaxis=Array(xs[:,1]) # 1D Array
     yaxis=Array(ys[1,:]) # 1D Array
@@ -92,15 +92,16 @@ function animate_spring2D(sp,ip,ap,V=Array{Float64,2})
     tdynamic=0.0 # Computing time for the dynamic
     anim = @animate for i ∈ 1:nf
 
-        tdynamic+= @elapsed CUDA.@sync begin
+        tdynamic+= @elapsed begin
             xc,xp,xt=advance_nδtpf(xc,xp,xt,fx,sp,ap)
             yc,yp,yt=advance_nδtpf(yc,yp,yt,fy,sp,ap)
+            do_synchronize(V) #sync if V is a GPU Array
         end
         @. dc = sqrt((xc - xs)^2+(yc - ys)^2) #displacement norm
         @. cdc = dc  # Copy dc (type V) to cdc (type Array{Float64,2})
 
         t+=nδtperframe*δt
-        contour(xaxis,yaxis,cdc,clims=(0,ip.shift/2), #level lines graph
+        contour(xaxis,yaxis,cdc,clims=(0,mdc/4), #level lines graph
             thickness_scaling = 1.4,size=(600,600),
             xlabel=L"x_s",ylabel=L"y_s",
             right_margin = 10Plots.PlotMeasures.mm,
