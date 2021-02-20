@@ -37,7 +37,7 @@ function setup_scene(xaxis,dc,nf)
     lim=FRect3D((0,0,0),(xM,xM,dM))
 
     surface!(scene,xaxis,xaxis,lift(d->d,dcnode),limits=lim,colormap=corporate_gradient(),colorrange = (-dM,dM))
-    scale!(scene, 1, 1, 0.1*xM/dM)
+    scale!(scene, 1, 1, 0.5/dM)
 
       translate_cam!(scene,(10,10,2))
         update_cam!(scene, Vec3f0(0, 0, 5), Vec3f0(0.01, 0.01, 0))
@@ -64,7 +64,9 @@ function animate_makie(sp,ip,ap,V)
     xaxis=Array(xs[:,1])
     yaxis=Array(ys[1,:])
     nf=nδt÷nδtperframe
-
+    density_shift!(dc,xc,yc,sp.ls)
+    # @. dc = sqrt((xc - xs)^2+(yc - ys)^2)
+    @. cdc = dc 
     scene,dcnode=setup_scene(xaxis,cdc,nf)
     display(scene)
     
@@ -88,7 +90,7 @@ end
 function go()
     sp=SpringParam(ls=0.1,ms=1,ks=2.5,ns=1000)
     ip=InitParam(λ=3.0,shift=0.1,pos=sp.ls*sp.ns/2)
-    ap=AnimParam(δt=0.2,nδt=5000,nδtperframe=40)
+    ap=AnimParam(δt=0.1,nδt=10000,nδtperframe=20)
 
     CUDA.allowscalar(false)
     # V=Array{Float64,2}

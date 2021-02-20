@@ -1,15 +1,15 @@
-Base.@kwdef struct SpringParam
+Base.@kwdef struct SpringParam{SIZES}
     ls::Float64 # Spring length
     ms::Float64 # Mass
     ks::Float64 # Spring Strength
-    ns::Int     # Mass number
+    ns::SIZES     # Mass number
 end
 getvalues(p::SpringParam) = p.ls,p.ms,p.ks,p.ns
 
-Base.@kwdef struct InitParam
+Base.@kwdef struct InitParam{POS}
     λ::Float64      # Wavelength of the initial deformation
     shift::Float64  # Maximal initial node displacement
-    pos::Float64    # Central position of the node displacement
+    pos::POS    # Central position of the node displacement
 end
 getvalues(p::InitParam) = p.λ,p.shift,p.pos
 
