@@ -73,21 +73,29 @@ function initialize_arrays(sp,ip,ap,V)
 
     crs=[steady_position(ci,ls) for ci ∈ CartesianIndices(ns)]
     crc=[initial_position(ci,ls,λ,shift,pos) for ci ∈ CartesianIndices(ns)]
-
+    # StructArray(CuArray(aos))
+    # vrs=StructArray(crs)
+    # vrc=StructArray(crc)
+    # @show typeof(vrs)
+    # rs=V(vrs)
+    # rc=V(vrc)
     # CUDA.allowscalar(true)
-    rs,rc = V.((crs,crc))
-    #Assume zero initial velocities : rp(revious)=rc(urrent)
-    f,rt,rp=zero(rc),zero(rc),copy(rc)
+    # rs=StructArray(rs)
+    # rc=StructArray(rc)
     # CUDA.allowscalar(false)
+
+    rs,rc = V.((crs,crc))
+    f,rt,rp=zero(rc),zero(rc),copy(rc)
 
     rs,rc,rp,rt,f,getproperty.(crs[:,1],:x),getproperty.(crs[1,:],:y)
 end
 
 function update_displacement!(dc,rc,rs) 
-    cdc=Array(rc - rs)
-    @. dc = norm.(cdc)
-
+    @. dc = norm(rc - rs)
 end
+
+
+
 
 function display_perf(td,rc,nδt)
     D=dimension(eltype(rc))
@@ -103,6 +111,13 @@ function display_perf(td,rc,nδt)
     println("$(round((mupns*nbytes),sigdigits=3))\t GB/s")
 end
 
+function substract_kernel(rt, rc, rs)
+    i = threadIdx().x
+    a=rc[i]-rs[i]
+    # rt[i]=a
+    # setproperty(rc[i],:x) = getproperty(rc[i],:x) - getproperty(rs[i],:x)
+    return
+end
 
 
 function animate_spring2D(sp,ip,ap,V)
@@ -117,13 +132,20 @@ function animate_spring2D(sp,ip,ap,V)
 
     # update_position!(rt,rc,rp,f,δt,ms)
 
-    dc=zeros(size(rs))
+    dc=V(zeros(size(rs)))
     cdc=Array(dc)
     update_displacement!(dc,rc,rs)
     mdc=maximum(dc)
     @show mdc
-    nf=nδt÷nδtperframe # We assume a null remainder
+    @show typeof(dc)
+    @show typeof(rc)
+    @show typeof(rs)
+    @show length.((dc,rc,rs))
+    # @cuda threads=length(rt) substract_kernel(rt, rc, rs)
+    # mdc=maximum(dc)
 
+    nf=nδt÷nδtperframe # We assume a null remainder
+    # return
     t=0.0 # Simulation time 
     tdynamic=0.0 # Computing time for the dynamic
     # for i ∈ 1:nf
@@ -135,7 +157,7 @@ function animate_spring2D(sp,ip,ap,V)
         @. cdc = dc  # Copy dc (type V) to cdc (type Array{Float64,2})
 
         t+=nδtperframe*δt
-        contour(xs,ys,dc,clims=(0,mdc/4), #level lines graph
+        contour(xs,ys,cdc,clims=(0,mdc/4), #level lines graph
             thickness_scaling = 1.4,size=(600,600),
             xlabel=L"x_s",ylabel=L"y_s",
             right_margin = 10Plots.PlotMeasures.mm,
@@ -146,7 +168,7 @@ function animate_spring2D(sp,ip,ap,V)
 end
 
 function main()
-    sp=SpringParam(ls=0.1,ms=1.0,ks=2.5,ns=(1000,1000))
+    sp=SpringParam(ls=0.1,ms=1.0,ks=2.5,ns=(800,800))
     center=Point2D(sp.ns[1]*sp.ls/2,sp.ns[2]*sp.ls/2)
     ip=InitParam(λ=2.0,shift=0.1,pos=center)
     ap=AnimParam(δt=0.1,nδt=2000,nδtperframe=2000)
