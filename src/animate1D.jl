@@ -9,7 +9,7 @@ end
 
 function update_force!(fx,xc,ks)
     ns=length(xc)
-    for i ∈ 2:ns-1 # Julia's loop are fast
+    for i ∈ 2:ns-1 # Julia's loops are fast
         fx[i] = -ks*(2xc[i]-xc[i-1]-xc[i+1])
     end
 end

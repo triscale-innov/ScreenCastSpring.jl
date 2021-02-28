@@ -33,17 +33,17 @@ function setup_scene(xaxis,dc,nf)
     dcnode = Node(dc)
 
     xM=maximum(xaxis)
-    dM=maximum(dc)*0.01
+    dM=maximum(dc)*0.1
     lim=FRect3D((0,0,0),(xM,xM,dM))
 
     surface!(scene,xaxis,xaxis,lift(d->d,dcnode),limits=lim,colormap=corporate_gradient(),colorrange = (-dM,dM))
     scale!(scene, 1, 1, 0.1*xM/dM)
 
-      translate_cam!(scene,(10,10,2))
-        update_cam!(scene, Vec3f0(0, 0, 5), Vec3f0(0.01, 0.01, 0))
-        rotate_cam!(scene,(π/4 ,-π/2 ,0))
-        αstep=-(π/4)/(nf÷2)
-        lift(d->rotate_cam!(scene,(0 ,αstep ,0)),dcnode)
+    #   translate_cam!(scene,(10,10,2))
+    #     update_cam!(scene, Vec3f0(0, 0, 5), Vec3f0(0.01, 0.01, 0))
+    #     rotate_cam!(scene,(π/4 ,-π/2 ,0))
+    #     αstep=-(π/4)/(nf÷2)
+    #     lift(d->rotate_cam!(scene,(0 ,αstep ,0)),dcnode)
 
 
 
@@ -60,7 +60,8 @@ function animate_makie(sp,ip,ap,V)
 
     dc=zero(xc)
     cdc=Array(xc)
-
+    density_shift!(dc,xc,yc,sp.ls)
+    @. cdc = dc 
     xaxis=Array(xs[:,1])
     yaxis=Array(ys[1,:])
     nf=nδt÷nδtperframe

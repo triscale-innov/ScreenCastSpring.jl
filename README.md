@@ -23,8 +23,8 @@ include("main1D.jl")
 ```julia
 ] activate .
 ] instantiate
-include("main1D.jl")
-include("main1D.jl") #run twice to get proper timings
+include("main2D.jl")
+include("main2D.jl") #run twice to get proper timings
 ```
 
 ![](images/spring2dplots.gif)
