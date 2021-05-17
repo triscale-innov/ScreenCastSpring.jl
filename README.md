@@ -1,6 +1,11 @@
 # Spring.jl
 ## A simple Julia Tutorial dedicated to the dynamic of 1D and 2D sets of masses connected with springs.
 
+This project is associated with the videos (in French with English subtitles) :
+
+1. https://www.youtube.com/watch?v=BLcNv_f75kI
+2. https://www.youtube.com/watch?v=Hy90EsYlEbc
+
 ### 1D System :
 
 ![](images/s1d.png)
